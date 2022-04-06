@@ -42,17 +42,25 @@ class Button implements Subject {
   }
 
   public detachEventListener(event: MyEvent): void {
-    this.observers = this.observers.filter((currentEvent: MyEvent) => {
-      currentEvent.eventID != event.eventID;
-    });
+    this.observers = this.observers.filter(
+      (currentEvent: MyEvent) => currentEvent.eventID != event.eventID
+    );
   }
 }
 
 // Client Code
 const btn = new Button();
-const evt = new MyEvent(23, function () {
+const e1 = new MyEvent(23, function () {
   console.log(`Event ${this.eventID} triggered`);
 });
 
-btn.attachEventListener(evt);
+const e2 = new MyEvent(77, function () {
+  console.log(`Event ${this.eventID} triggered`);
+});
+
+btn.attachEventListener(e1);
+btn.attachEventListener(e2);
+btn.toggle();
+btn.toggle();
+btn.detachEventListener(e2);
 btn.toggle();
