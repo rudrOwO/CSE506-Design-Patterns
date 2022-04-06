@@ -5,14 +5,15 @@
     "removeComments": true,
     "preserveConstEnums": true,
     "sourceMap": true,
-    "experimentalDecorators": true
+    "experimentalDecorators": true,
+    "lib": ["ES2018", "DOM"]
   },
   "files": [
-    "abstractFactory.ts",
+    // "abstractFactory.ts",
     "builder.ts",
-    "decorator.ts",
+    // "decorator.ts",
     "observer.ts",
-    "singleton.ts",
-    "strategy.ts",
+    // "singleton.ts",
+    // "strategy.ts",
   ]
 }
