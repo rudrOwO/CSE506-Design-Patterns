@@ -1,71 +1,58 @@
 interface Subject {
-    attach(observer: Observer): void;
-    detach(observer: Observer): void;
-    notify(): void;
+  attachEventListener(observer: Observer): void;
+  detachEventListener(observer: Observer): void;
+  notifyObservers(): void;
 }
-
-
-class ConcreteSubject implements Subject {
-    public state: number;
-
-    private observers: Observer[] = [];
-
-    //  The subscription management methods.
-    public attach(observer: Observer): void {
-        const isExist = this.observers.includes(observer);
-        if (isExist) {
-            return console.log('Subject: Observer has been attached already.');
-        }
-
-        console.log('Subject: Attached an observer.');
-        this.observers.push(observer);
-    }
-
-    public detach(observer: Observer): void {
-        const observerIndex = this.observers.indexOf(observer);
-        if (observerIndex === -1) {
-            return console.log('Subject: Nonexistent observer.');
-        }
-
-        this.observers.splice(observerIndex, 1);
-        console.log('Subject: Detached an observer.');
-    }
-
-    //  Trigger an update in each subscriber.
-    public notify(): void {
-        console.log('Subject: Notifying observers...');
-        for (const observer of this.observers) {
-            observer.update(this);
-        }
-    }
-}
-
 
 interface Observer {
-    // Receive update from subject.
-    update(subject: Subject): void;
+  execute(): void;
 }
 
-//  Concrete Observers react to the updates issued by the Subject they had been
-//  attached to.
-class ConcreteObserverA implements Observer {
-    public update(subject: Subject): void {
-        console.log('ConcreteObserverA: Reacted to the event.');
+class MyEvent implements Observer {
+  eventID: number;
+  callBack: Function;
+
+  constructor(id: number, callBack: Function) {
+    this.eventID = id;
+    this.callBack = callBack;
+  }
+
+  public execute(): void {
+    this.callBack();
+  }
+}
+
+class Button implements Subject {
+  private isPressed = false;
+  private observers: Array<Observer> = [];
+
+  public toggle() {
+    this.isPressed = !this.isPressed;
+    if (this.isPressed) this.notifyObservers();
+  }
+
+  public notifyObservers(): void {
+    for (const event of this.observers) {
+      event.execute();
     }
+  }
+
+  public attachEventListener(event: MyEvent): void {
+    this.observers.push(event);
+  }
+
+  public detachEventListener(event: MyEvent): void {
+    this.observers = this.observers.filter((currentEvent: MyEvent) => {
+      currentEvent.eventID != event.eventID;
+    });
+  }
 }
 
-class ConcreteObserverB implements Observer {
-    public update(subject: Subject): void {
-        console.log('ConcreteObserverB: Reacted to the event.');
-    }
-}
+// Client Code
+const btn = new Button();
+const evt = new MyEvent(23, function () {
+  console.log(`Event ${this.eventID} triggered`);
+});
 
-
-// The client code
-const subject = new ConcreteSubject();
-
-const observer1 = new ConcreteObserverA();
-subject.attach(observer1);
-
-const observer2 = new ConcreteObserverB();
-subject.attach(observer2);
+btn.attachEventListener(evt);
+btn.toggle();
